@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Logs
+*.log
+logs/
+
+#AI agents instructions
+agent.md
+TECH_DECISIONS.md
+
+# Temporary files
+*.tmp
+*.temp
+*_clean*
+*_nometa_backup*
+cleanup_office.vbs
+check_office.vbs
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# Archives (не в репозитории)
+*.zip
+
+# Debug files
+debug_*.js
+test_*.js
+test_*.vbs
+validate-*.js
