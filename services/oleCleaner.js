@@ -7,7 +7,12 @@ const fs = require('fs');
 const fsp = require('fs').promises;
 const path = require('path');
 const { spawn } = require('child_process');
+const { app } = require('electron');
 const iconv = require('iconv-lite');
+
+// В собранном приложении __dirname указывает внутрь ASAR (read-only).
+// Все VBS-файлы пишем в системную temp-папку — она доступна для записи всегда.
+const scriptsDir = app.isPackaged ? app.getPath('temp') : __dirname;
 
 async function cleanOfficeFile(filePath, tempPath) {
     if (process.platform !== 'win32') {
@@ -26,7 +31,7 @@ async function cleanOfficeFile(filePath, tempPath) {
         await fsp.copyFile(filePath, backupPath);
 
         const script = generateCleanupScript(filePath, tempPathCorrect, ext);
-        const wscriptPath = path.join(__dirname, 'cleanup_office.vbs');
+        const wscriptPath = path.join(scriptsDir, 'cleanup_office.vbs');
         
         // Пишем VBScript в кодировке cp1251 (русский)
         await fsp.writeFile(wscriptPath, iconv.encode(script, 'cp1251'));
@@ -240,7 +245,7 @@ async function checkOfficeInstalled() {
         'Else\r\n' +
         '    WScript.Echo "NOT_INSTALLED"\r\n' +
         'End If\r\n';
-    const scriptPath = path.join(__dirname, 'check_office.vbs');
+    const scriptPath = path.join(scriptsDir, 'check_office.vbs');
     
     try {
         await fsp.writeFile(scriptPath, iconv.encode(script, 'cp1251'));
