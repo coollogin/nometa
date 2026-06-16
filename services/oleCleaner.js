@@ -6,7 +6,7 @@
 const fs = require('fs');
 const fsp = require('fs').promises;
 const path = require('path');
-const { execFile } = require('child_process');
+const { spawn } = require('child_process');
 const iconv = require('iconv-lite');
 
 async function cleanOfficeFile(filePath, tempPath) {
@@ -201,13 +201,24 @@ WScript.Quit 1`;
 
 function runWScript(scriptPath) {
     return new Promise((resolve) => {
-        execFile('cscript', ['/nologo', scriptPath], { encoding: 'buffer' }, (error, stdout, stderr) => {
+        // Используем spawn с shell: true вместо execFile — иначе на Windows 7
+        // COM automation может падать с "Out of memory" или молча возвращать ошибку
+        const cmd = `cscript /nologo "${scriptPath}"`;
+        const proc = spawn(cmd, { shell: true, windowsHide: true });
+
+        let stdout = Buffer.alloc(0);
+        proc.stdout.on('data', (data) => { stdout = Buffer.concat([stdout, data]); });
+
+        proc.on('error', (err) => {
+            resolve({ success: false, error: err.message });
+        });
+
+        proc.on('close', (code) => {
+            // Декодируем как cp1251 — cscript на русской Windows выводит в этой кодировке
             const output = iconv.decode(stdout, 'cp1251').trim();
-            if (error) {
-                resolve({ success: false, error: error.message });
-                return;
-            }
-            if (output.includes('OK')) {
+            if (code !== 0 && !output.includes('OK')) {
+                resolve({ success: false, error: output || `cscript exited with code ${code}` });
+            } else if (output.includes('OK')) {
                 resolve({ success: true });
             } else {
                 resolve({ success: false, error: output || 'Unknown error' });

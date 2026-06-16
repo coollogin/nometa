@@ -3,7 +3,7 @@
   <p align="center">Десктопное приложение для очистки метаданных из офисных документов</p>
   <p align="center">
     <img src="https://img.shields.io/badge/Platform-Windows%207%2B-blue" alt="Platform">
-    <img src="https://img.shields.io/badge/Electron-27-47848f" alt="Electron">
+    <img src="https://img.shields.io/badge/Electron-22-47848f" alt="Electron">
     <img src="https://img.shields.io/badge/Node.js-18-339933" alt="Node.js">
     <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
   </p>
@@ -160,7 +160,7 @@ nometa/
 
 | Технология | Назначение |
 |------------|------------|
-| **Electron 27** | Десктопный фреймворк |
+|| **Electron 22** | Десктопный фреймворк |
 | **Node.js 18** | Серверная логика |
 | **VBScript** | Автоматизация Microsoft Office |
 | **pdf-lib** | Обработка PDF файлов |
